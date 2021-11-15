@@ -5,7 +5,6 @@
 #include "wdt.h"
 #include "uart.h"
 #include "bt.h"
-//#include "lpm.h"
 #include "Serial.h"
 #include "LoRa.h"
 
@@ -26,8 +25,6 @@
 #define Red_LED_ON Gpio_SetIO(0, 3, TRUE)
 #define Red_LED_OFF Gpio_SetIO(0, 3, FALSE)
 //#######################################
-#define RC_CHANNEL_MIN 1155   // Servo rx minimum position 
-#define RC_CHANNEL_MAX 1929  // Servo rx maximum position 
 #define SBUS_MIN_VALUE 173   // 
 #define SBUS_MAX_VALUE 1811  // 
 #define SBUS_UPDATE_RATE 14  //ms NORM SPEED:14   HIGH SPEED:7
@@ -43,17 +40,15 @@ static uint16_t rssi;
 
 static uint32_t sbusTime = 0;
 static uint8_t sbusPacket[25];
+uint8_t SerialBuff[4];
 boolean_t isFailsafe;
 
-//char u8TxData [] = "HUADA MCU!";
-//uint8_t Buffer[BufferSize] = "1234567890";
+uint8_t RFch;
 
-//volatile boolean_t RxFlg;
-//volatile unsigned char IDX;
 uint8_t packet[BufferSize];
 
 boolean_t Read_Packet(void);
-void sbusPreparePacket(boolean_t digitalCH1, boolean_t digitalCH2, boolean_t isSignalLoss, boolean_t isFailsafe);
+void sbusPreparePacket(boolean_t isSignalLoss, boolean_t isFailsafe);
 
 
 long map(long x, long in_min, long in_max, long out_min, long out_max)
@@ -120,7 +115,7 @@ en_result_t BtTimer2Init(void)
 
 int32_t main(void)
 {
-    ////////////////////////WDT Init////////////////////////  
+  ////////////////////////WDT Init////////////////////////  
   stc_wdt_config_t  stcWdt_Config;
   
   DDL_ZERO_STRUCT(stcWdt_Config); 
@@ -192,14 +187,14 @@ int32_t main(void)
     LoRaidle();
     
     LoRasetSyncWord(0xF3);           // ranges from 0-0xFF, default 0x34, see API docs
-    
+        
     LoRareceive(0);
 
     while (1)
     {
       if ((millis() - sbusTime) > SBUS_UPDATE_RATE) {
         sbusTime = millis();
-        sbusPreparePacket(FALSE, FALSE, FALSE, isFailsafe);
+        sbusPreparePacket(FALSE, isFailsafe);
         
         // Reset Watchdog Timer
         Wdt_Feed();
@@ -234,6 +229,12 @@ int32_t main(void)
           continue;
         }         
         
+        RFch = packet[12] & 0x0F;
+        
+        for (uint8_t i = 0; i < 4; i++) {
+          SerialBuff [i] = packet[13+i];
+        } 
+  
         Red_LED_ON;
         failsafeCnt = 0;
         isFailsafe = FALSE;
@@ -246,61 +247,60 @@ boolean_t Read_Packet(void) {
   uint8_t i = 0;
   while (LoRaavailable()) {
     packet[i] = LoRaread();  
-    if(i == 0 && packet[0] != 0x55) continue;
-    if(i == 1 && packet[1] != 0xFC) 
-    {
-      i = 0;
-      break;
-    }
     i++;
     if(i == 18) {
-      rssi = map(LoRapacketRssi()+157, 0, 157, RC_CHANNEL_MIN, RC_CHANNEL_MAX);
+      rssi = map(LoRapacketRssi()+157, 0, 157, SBUS_MIN_VALUE, SBUS_MAX_VALUE);
       return 1;
     }
   }
   return 0;
 }
 
-void sbusPreparePacket(boolean_t digitalCH1, boolean_t digitalCH2, boolean_t isSignalLoss, boolean_t isFailsafe) {
-  // Serial.write(packet, 18);
+void sbusPreparePacket(boolean_t isSignalLoss, boolean_t isFailsafe) {
   memset(sbusPacket, 0x00, 25);  //Zero out packet data
   sbusPacket[0] = 0x0F;          //Header
   sbusPacket[24] = 0x00;         //Footer 0x00 for SBUS
-
+  
   uint8_t SBUS_Current_Packet_Bit = 0;
   uint8_t SBUS_Packet_Position = 1;
-
-  for (uint8_t SBUS_Current_Channel = 0; SBUS_Current_Channel < chanel_number + 1; SBUS_Current_Channel++) {
-
-    uint16_t sbusval;
-    if (isFailsafe) {
-      if (SBUS_Current_Channel == chanel_number || SBUS_Current_Channel == 2) {
-        sbusval = RC_CHANNEL_MIN;
-      } else sbusval = 1543;
-    } else {
-      if (SBUS_Current_Channel != chanel_number) {
-        sbusval = packet[2 + (2 * SBUS_Current_Channel)] << 8 | packet[3 + (2 * SBUS_Current_Channel)];
-      } else {
-        sbusval = rssi;
-      }
-      sbusval = min(sbusval, RC_CHANNEL_MAX);
-      sbusval = max(sbusval, RC_CHANNEL_MIN);
+  
+  uint16_t sbusval;
+  
+  if (!isFailsafe) {
+    for (uint8_t i = 0; i<11; i++) {
+      sbusPacket[1+i] = packet[i]; 
     }
-
-    sbusval = map(sbusval, RC_CHANNEL_MIN, RC_CHANNEL_MAX, SBUS_MIN_VALUE, SBUS_MAX_VALUE);
-
-    for (uint8_t SBUS_Current_Channel_Bit = 0; SBUS_Current_Channel_Bit < 11; SBUS_Current_Channel_Bit++) {
-      if (SBUS_Current_Packet_Bit > 7) {
-        SBUS_Current_Packet_Bit = 0;  //If we just set bit 7 in a previous step, reset the packet bit to 0 and
-        SBUS_Packet_Position++;       //Move to the next packet uint8_t
+    
+    sbusPacket[10] &= ~0xE0;
+    sbusPacket[10] |= rssi << 5;
+    sbusPacket[11] = rssi >> 3;
+    
+    for (uint8_t i = 0; i<4; i++) {
+      if (packet[11] & (1 << i)) {
+        sbusval = SBUS_MAX_VALUE;
+      } else {
+        sbusval = SBUS_MIN_VALUE;      
       }
-      sbusPacket[SBUS_Packet_Position] |= (((sbusval >> SBUS_Current_Channel_Bit) & 0x1) << SBUS_Current_Packet_Bit);  //Downshift the channel data bit, then upshift it to set the packet data uint8_t
-      SBUS_Current_Packet_Bit++;
+    }
+  } else {
+    
+    for (uint8_t i = 0; i<8; i++) {
+      if (i == 7 || i == 2) {
+        sbusval = SBUS_MIN_VALUE;
+      } else sbusval = 992;
+      
+      for (uint8_t SBUS_Current_Channel_Bit = 0; SBUS_Current_Channel_Bit < 11; SBUS_Current_Channel_Bit++) {
+        if (SBUS_Current_Packet_Bit > 7) {
+          SBUS_Current_Packet_Bit = 0;  //If we just set bit 7 in a previous step, reset the packet bit to 0 and
+          SBUS_Packet_Position++;       //Move to the next packet uint8_t
+        }
+        sbusPacket[SBUS_Packet_Position] |= (((sbusval >> SBUS_Current_Channel_Bit) & 0x1) << SBUS_Current_Packet_Bit);  //Downshift the channel data bit, then upshift it to set the packet data uint8_t
+        SBUS_Current_Packet_Bit++;
+      } 
     }
   }
-
-  if (digitalCH1) sbusPacket[23] |= (1 << 0);
-  if (digitalCH2) sbusPacket[23] |= (1 << 1);
+  if (packet[12] & (1 << 0)) sbusPacket[23] |= (1 << 0);
+  if (packet[12] & (1 << 1)) sbusPacket[23] |= (1 << 1);
   if (isSignalLoss) sbusPacket[23] |= (1 << 2);
   if (isFailsafe) sbusPacket[23] |= (1 << 3);
 }

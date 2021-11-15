@@ -21,14 +21,34 @@
 
 #define BufferSize                                  32
 
+//#######################################
+#define RC_CHANNEL_MIN 1155   // Servo rx minimum position 
+#define RC_CHANNEL_MAX 1929  // Servo rx maximum position 
+#define SBUS_MIN_VALUE 173   // 
+#define SBUS_MAX_VALUE 1811  // 
+#define SBUS_UPDATE_RATE 14  //ms NORM SPEED:14   HIGH SPEED:7
+//#######################################
+//////////////////////CONFIGURATION///////////////////////////////
+#define chanel_number 8  //set the number of chanels
+//////////////////////////////////////////////////////////////////
+
+static uint8_t Packet[18];
+
 //char u8TxData [] = "HUADA MCU!";
-//uint8_t Buffer[10] = "1234567890";
+uint8_t SerialBuff[4] = "HELO";
 int ledState = FALSE;
 uint32_t previousMillis = 0;
 uint32_t previousMillis2 = 0;
 volatile boolean_t RxFlg;
 volatile unsigned char IDX;
 uint8_t packet[BufferSize];
+
+void PreparePacket(boolean_t digitalCH1, boolean_t digitalCH2, boolean_t isSignalLoss, boolean_t isFailsafe);
+
+long map(long x, long in_min, long in_max, long out_min, long out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 en_result_t BtTimer2Init(void)
 {
@@ -86,13 +106,6 @@ void RxIntCallback(void)
       RxFlg = TRUE;
     }
 }
-uint8_t Da=0xff;
-//static void WdtCallback(void)
-//{
-//    // comment following to demonstrate the hardware watchdog reset
-//    Da = ~Da;
-//    Gpio_SetIO(0,3,Data);
-//}
 
 int32_t main(void)
 { 
@@ -175,10 +188,12 @@ int32_t main(void)
       
       Uart_DisableIrq(UARTCH0,UartRxIrq);
       
+      PreparePacket(FALSE, FALSE, FALSE, FALSE);
+      
 //      previousMillis2 = millis(); 
       
       LoRabeginPacket(FALSE);
-      LoRawrite(packet, 18);      
+      LoRawrite(Packet, 18);      
       
       RxFlg = FALSE;
            
@@ -197,4 +212,61 @@ int32_t main(void)
     
     Wdt_Feed();
   }
+}
+
+void PreparePacket(boolean_t digitalCH1, boolean_t digitalCH2, boolean_t isSignalLoss, boolean_t isFailsafe) {
+  memset(Packet, 0x00, 18);  //Zero out packet data
+
+  uint8_t Current_Packet_Bit = 0;
+  uint8_t Packet_Position = 0;
+
+  for (uint8_t Current_Channel = 0; Current_Channel < 8; Current_Channel++) {
+
+    uint16_t val;
+    if (isFailsafe) {
+      if (Current_Channel == 2) {
+        val = RC_CHANNEL_MIN;
+      } else val = 1543;
+    } else {
+      if(Current_Channel < 6){/////////////////for HK
+        val = packet[2 + (2 * Current_Channel)] << 8 | packet[3 + (2 * Current_Channel)];
+      }
+      val = min(val, RC_CHANNEL_MAX);
+      val = max(val, RC_CHANNEL_MIN);
+    }
+
+    val = map(val, RC_CHANNEL_MIN, RC_CHANNEL_MAX, SBUS_MIN_VALUE, SBUS_MAX_VALUE);
+
+    for (uint8_t Current_Channel_Bit = 0; Current_Channel_Bit < 11; Current_Channel_Bit++) {
+      if (Current_Packet_Bit > 7) {
+        Current_Packet_Bit = 0;  //If we just set bit 7 in a previous step, reset the packet bit to 0 and
+        Packet_Position++;       //Move to the next packet uint8_t
+      }
+      Packet[Packet_Position] |= (((val >> Current_Channel_Bit) & 0x1) << Current_Packet_Bit);  //Downshift the channel data bit, then upshift it to set the packet data uint8_t
+      Current_Packet_Bit++;
+    }
+  }
+  
+//  if (digitalCH9 > (RC_CHANNEL_MAX/2)) Packet[11] |= (1 << 0);
+//  if (digitalCH10 > (RC_CHANNEL_MAX/2)) Packet[11] |= (1 << 1);
+//  if (digitalCH11 > (RC_CHANNEL_MAX/2)) Packet[11] |= (1 << 2);
+//  if (digitalCH12 > (RC_CHANNEL_MAX/2)) Packet[11] |= (1 << 3);
+//  if (digitalCH13 > (RC_CHANNEL_MAX/2)) Packet[11] |= (1 << 4);
+//  if (digitalCH14 > (RC_CHANNEL_MAX/2)) Packet[11] |= (1 << 5);
+//  if (digitalCH15 > (RC_CHANNEL_MAX/2)) Packet[11] |= (1 << 6);
+//  if (digitalCH16 > (RC_CHANNEL_MAX/2)) Packet[11] |= (1 << 7);
+  
+//  if (digitalCH1) Packet[12] |= (1 << 0);
+//  if (digitalCH2) Packet[12] |= (1 << 1);
+//  if (isSignalLoss) Packet[12] |= (1 << 2);
+//  if (isFailsafe) Packet[12] |= (1 << 3);
+  
+//  if (RFCH1) Packet[12] |= (1 << 4);
+//  if (RFCH2) Packet[12] |= (1 << 5);
+//  if (RFCH3) Packet[12] |= (1 << 6);
+//  if (RFCH4) Packet[12] |= (1 << 7);
+  
+  for (uint8_t i = 0; i < 4; i++) {
+    Packet[13+i] = SerialBuff [i];
+  } 
 }
