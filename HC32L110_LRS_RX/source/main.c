@@ -15,7 +15,7 @@
                                                               //   500 kHz,
 
 #define LORA_SPREADING_FACTOR                       7         // [SF7..SF12]
-#define LORA_CODINGRATE                             5         // [5: 4/5,
+#define LORA_CODINGRATE                             8         // [5: 4/5,
                                                               //  6: 4/6,
                                                               //  7: 4/7,
                                                               //  8: 4/8]
