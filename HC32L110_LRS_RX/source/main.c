@@ -7,7 +7,7 @@
 #include "bt.h"
 //#include "lpm.h"
 #include "Serial.h"
-#include "D:\Users\Pavel\Documents\IAR Embedded Workbench\HC32L110_LRS\source\LoRa.h"
+#include "LoRa.h"
 
 #define TX_OUTPUT_POWER                             20        // dBm
 #define LORA_BANDWIDTH                              250E3     // [ 125 kHz,
