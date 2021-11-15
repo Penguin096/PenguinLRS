@@ -1,0 +1,416 @@
+###############################################################################
+#
+# IAR ELF Linker V8.30.1.114/W32 for ARM                  14/Nov/2021  22:08:54
+# Copyright 2007-2018 IAR Systems AB.
+#
+#    Output file  =  
+#        D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Exe\HC32L110_LRS.out
+#    Map file     =  
+#        D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\List\HC32L110_LRS.map
+#    Command line =  
+#        -f C:\Users\Pavel\AppData\Local\Temp\EWC902.tmp
+#        ("D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Obj\bt.o" "D:\Users\Pavel\Documents\IAR
+#        Embedded Workbench\HC32L110_LRS\Release\Obj\clk.o"
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Obj\ddl.o"
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Obj\gpio.o"
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Obj\interrupts_hc32l110.o"
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Obj\LoRa.o"
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Obj\main.o"
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Obj\spi.o"
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Obj\startup_hc32l110.o"
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Obj\system_hc32l110.o"
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Obj\uart.o"
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Obj\wdt.o" --no_out_extension -o
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\Exe\HC32L110_LRS.out" --redirect
+#        _Printf=_PrintfFullNoMb --redirect _Scanf=_ScanfFullNoMb --map
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\Release\List\HC32L110_LRS.map" --config
+#        "D:\Users\Pavel\Documents\IAR Embedded
+#        Workbench\HC32L110_LRS\HC32L110.icf" --semihosting --entry
+#        __iar_program_start --redirect __write=__write_buffered --vfe
+#        --text_out locale)
+#
+###############################################################################
+
+*******************************************************************************
+*** RUNTIME MODEL ATTRIBUTES
+***
+
+CppFlavor       = *
+__SystemLibrary = DLib
+__dlib_version  = 6
+
+
+*******************************************************************************
+*** HEAP SELECTION
+***
+
+The basic heap was selected because no calls to memory allocation
+functions were found in the application outside of system library
+functions, and there are calls to deallocation functions in the
+application.
+
+
+*******************************************************************************
+*** PLACEMENT SUMMARY
+***
+
+"A0":  place at 0x0 { ro section .intvec };
+"P1":  place in [from 0x0 to 0x7fff] { ro };
+define block CSTACK with size = 256, alignment = 8 { };
+define block HEAP with size = 256, alignment = 8 { };
+"P2":  place in [from 0x2000'0000 to 0x2000'0fff] {
+          rw, block CSTACK, block HEAP };
+initialize by copy { rw };
+
+  Section            Kind         Address    Size  Object
+  -------            ----         -------    ----  ------
+"A0":                                        0xc0
+  .intvec            ro code          0x0    0xc0  startup_hc32l110.o [1]
+                                   - 0xc0    0xc0
+
+"P1":                                      0x257e
+  .text              ro code         0xc0   0x7ac  clk.o [1]
+  .text              ro code        0x86c    0x48  system_hc32l110.o [1]
+  .text              ro code        0x8b4    0x70  ddl.o [1]
+  .text              ro code        0x924    0xe0  I32DivModFast.o [4]
+  .text              ro code        0xa04     0x2  IntDivZer.o [4]
+  .text              ro code        0xa06     0x2  startup_hc32l110.o [1]
+  .text              ro code        0xa08   0x6b0  LoRa.o [1]
+  .text              ro code       0x10b8   0x370  gpio.o [1]
+  .text              ro code       0x1428   0x178  spi.o [1]
+  .text              ro code       0x15a0    0x6a  I64DivMod.o [4]
+  .text              ro code       0x160a     0x2  startup_hc32l110.o [1]
+  .text              ro code       0x160c   0x232  interrupts_hc32l110.o [1]
+  .text              ro code       0x183e     0x2  startup_hc32l110.o [1]
+  .text              ro code       0x1840     0x2  I64DivZer.o [4]
+  .text              ro code       0x1842     0x2  startup_hc32l110.o [1]
+  .text              ro code       0x1844   0x4b0  uart.o [1]
+  .text              ro code       0x1cf4   0x3c4  bt.o [1]
+  .text              ro code       0x20b8    0xa4  wdt.o [1]
+  .text              ro code       0x215c   0x3c4  main.o [1]
+  .text              ro code       0x2520    0x3c  packbits_init_single.o [4]
+  .text              ro code       0x255c    0x28  startup_hc32l110.o [1]
+  .text              ro code       0x2584    0x28  data_init.o [4]
+  .iar.init_table    const         0x25ac    0x10  - Linker created -
+  .text              ro code       0x25bc    0x1e  cmain.o [4]
+  .text              ro code       0x25da     0x4  low_level_init.o [2]
+  .text              ro code       0x25de     0x8  exit.o [2]
+  .text              ro code       0x25e6     0x2  startup_hc32l110.o [1]
+  .text              ro code       0x25e8     0xa  cexit.o [4]
+  .text              ro code       0x25f2     0x2  startup_hc32l110.o [1]
+  .text              ro code       0x25f4    0x14  exit.o [5]
+  .text              ro code       0x2608     0xc  cstartup_M.o [4]
+  .rodata            const         0x2614     0x8  clk.o [1]
+  .rodata            const         0x261c     0x4  clk.o [1]
+  .text              ro code       0x2620     0x2  startup_hc32l110.o [1]
+  .text              ro code       0x2622     0x2  startup_hc32l110.o [1]
+  .text              ro code       0x2624     0x2  startup_hc32l110.o [1]
+  .text              ro code       0x2626     0x2  startup_hc32l110.o [1]
+  .text              ro code       0x2628     0x2  startup_hc32l110.o [1]
+  .rodata            const         0x262a     0x0  packbits_init_single.o [4]
+  Initializer bytes  const         0x262a    0x14  <for P2-1>
+                                 - 0x263e  0x257e
+
+"P2", part 1 of 2:                           0x72
+  P2-1                        0x2000'0000    0x72  <Init block>
+    .data            inited   0x2000'0000     0x4  system_hc32l110.o [1]
+    .data            inited   0x2000'0004    0x28  uart.o [1]
+    .bss             inited   0x2000'002c     0x4  bt.o [1]
+    .bss             inited   0x2000'0030     0x4  bt.o [1]
+    .bss             inited   0x2000'0034     0x4  bt.o [1]
+    .bss             inited   0x2000'0038     0x4  LoRa.o [1]
+    .bss             inited   0x2000'003c     0x4  LoRa.o [1]
+    .bss             inited   0x2000'0040     0x4  main.o [1]
+    .bss             inited   0x2000'0044     0x4  main.o [1]
+    .bss             inited   0x2000'0048    0x20  main.o [1]
+    .bss             inited   0x2000'0068     0x4  spi.o [1]
+    .bss             inited   0x2000'006c     0x4  wdt.o [1]
+    .bss             inited   0x2000'0070     0x1  main.o [1]
+    .bss             inited   0x2000'0071     0x1  main.o [1]
+                            - 0x2000'0072    0x72
+
+"P2", part 2 of 2:                          0x100
+  CSTACK                      0x2000'0078   0x100  <Block>
+    CSTACK           uninit   0x2000'0078   0x100  <Block tail>
+                            - 0x2000'0178   0x100
+
+Unused ranges:
+
+         From           To    Size
+         ----           --    ----
+       0x263e       0x7fff  0x59c2
+  0x2000'0072  0x2000'0077     0x6
+  0x2000'0178  0x2000'0fff   0xe88
+
+
+*******************************************************************************
+*** INIT TABLE
+***
+
+          Address      Size
+          -------      ----
+Copy/packbits (__iar_packbits_init_single3)
+    1 source range, total size 0x14 (17% of destination):
+               0x262a  0x14
+    1 destination range, total size 0x72:
+          0x2000'0000  0x72
+
+
+
+*******************************************************************************
+*** MODULE SUMMARY
+***
+
+    Module                  ro code  ro data  rw data
+    ------                  -------  -------  -------
+command line/config:
+    -------------------------------------------------
+    Total:
+
+D:\Users\Pavel\Documents\IAR Embedded Workbench\HC32L110_LRS\Release\Obj: [1]
+    LoRa.o                    1 712        2        8
+    bt.o                        964        2       12
+    clk.o                     1 964       12
+    ddl.o                       112
+    gpio.o                      880
+    interrupts_hc32l110.o       562
+    main.o                      964        8       42
+    spi.o                       376                 4
+    startup_hc32l110.o          254
+    system_hc32l110.o            72                 4
+    uart.o                    1 200        7       40
+    wdt.o                       164        1        4
+    -------------------------------------------------
+    Total:                    9 224       32      114
+
+dl6M_tlf.a: [2]
+    exit.o                        8
+    low_level_init.o              4
+    -------------------------------------------------
+    Total:                       12
+
+m6M_tl.a: [3]
+    -------------------------------------------------
+    Total:
+
+rt6M_tl.a: [4]
+    I32DivModFast.o             224
+    I64DivMod.o                 106
+    I64DivZer.o                   2
+    IntDivZer.o                   2
+    cexit.o                      10
+    cmain.o                      30
+    cstartup_M.o                 12
+    data_init.o                  40
+    packbits_init_single.o       60
+    -------------------------------------------------
+    Total:                      486
+
+shb_l.a: [5]
+    exit.o                       20
+    -------------------------------------------------
+    Total:                       20
+
+    Linker created                        16      256
+-----------------------------------------------------
+    Grand Total:              9 742       48      370
+
+
+*******************************************************************************
+*** ENTRY LIST
+***
+
+Entry                       Address   Size  Type      Object
+-----                       -------   ----  ----      ------
+.iar.init_table$$Base        0x25ac          --   Gb  - Linker created -
+.iar.init_table$$Limit       0x25bc          --   Gb  - Linker created -
+?main                        0x25bd         Code  Gb  cmain.o [4]
+Bt2Int                       0x215d   0x1c  Code  Gb  main.o [1]
+BtTimer2Init                 0x22fb   0x78  Code  Gb  main.o [1]
+Bt_ARRSet                    0x1fe1   0x54  Code  Gb  bt.o [1]
+Bt_ClearIntFlag              0x1d35   0x42  Code  Gb  bt.o [1]
+Bt_Cnt16Set                  0x2041   0x54  Code  Gb  bt.o [1]
+Bt_EnableIrq                 0x1d77   0x48  Code  Gb  bt.o [1]
+Bt_GetIntFlag                0x1cf5   0x40  Code  Gb  bt.o [1]
+Bt_Init                      0x1ded  0x18c  Code  Gb  bt.o [1]
+Bt_Run                       0x1f85   0x42  Code  Gb  bt.o [1]
+CSTACK$$Base            0x2000'0078          --   Gb  - Linker created -
+CSTACK$$Limit           0x2000'0178          --   Gb  - Linker created -
+ClkUnlock                     0x14d    0xc  Code  Lc  clk.o [1]
+ClkWriteDummy                 0x159    0xc  Code  Lc  clk.o [1]
+Clk_Enable                    0x629  0x122  Code  Gb  clk.o [1]
+Clk_GetClkRdy                 0x331   0x5e  Code  Gb  clk.o [1]
+Clk_GetHClkFreq               0x211   0x96  Code  Gb  clk.o [1]
+Clk_GetPClkFreq               0x2b1   0x16  Code  Gb  clk.o [1]
+Clk_Init                      0x2d5   0x1a  Code  Gb  clk.o [1]
+Clk_SetHClkDiv                0x445   0x54  Code  Gb  clk.o [1]
+Clk_SetPClkDiv                0x4ad   0x44  Code  Gb  clk.o [1]
+Clk_SetPeripheralGate         0x751   0x38  Code  Gb  clk.o [1]
+Clk_SetRCHFreq                0x395   0x9e  Code  Gb  clk.o [1]
+Clk_SetRCL_StableTime         0x555   0x60  Code  Gb  clk.o [1]
+Clk_SetSource                 0x2ef   0x3a  Code  Gb  clk.o [1]
+Clk_SetXTH_StableTime         0x4f5   0x5c  Code  Gb  clk.o [1]
+Clk_SetXTL_StableTime         0x5b9   0x5c  Code  Gb  clk.o [1]
+Clk_SwitchTo                  0x165   0xa8  Code  Gb  clk.o [1]
+Clk_SysTickConfig             0x79d   0xa4  Code  Gb  clk.o [1]
+EnableNvic                   0x16fd   0x3a  Code  Gb  interrupts_hc32l110.o [1]
+Gpio_InitIO                  0x110b   0xea  Code  Gb  gpio.o [1]
+Gpio_InitIOExt               0x11f5  0x1b4  Code  Gb  gpio.o [1]
+Gpio_SetAnalog               0x10b9   0x52  Code  Gb  gpio.o [1]
+Gpio_SetIO                   0x13a9   0x5a  Code  Gb  gpio.o [1]
+HardFault_Handler            0x1737    0xe  Code  Gb  interrupts_hc32l110.o [1]
+IDX                     0x2000'0071    0x1  Data  Gb  main.o [1]
+IRQ000_Handler               0x1745    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ001_Handler               0x174f    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ002_Handler               0x1759    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ003_Handler               0x1763    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ006_Handler               0x176d    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ007_Handler               0x1777    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ008_Handler               0x1781    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ010_Handler               0x178b    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ012_Handler               0x1795    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ014_Handler               0x179f    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ015_Handler               0x17a9    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ016_Handler               0x17b3    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ017_Handler               0x17bd    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ018_Handler               0x17c7    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ019_Handler               0x17d1    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ020_Handler               0x17db    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ021_Handler               0x17e5    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ022_Handler               0x17ef    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ023_Handler               0x17f9    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ024_Handler               0x1803    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ026_Handler               0x180d    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ027_Handler               0x1817    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ028_Handler               0x1821    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ030_Handler               0x182b    0xa  Code  Gb  interrupts_hc32l110.o [1]
+IRQ031_Handler               0x1835    0xa  Code  Gb  interrupts_hc32l110.o [1]
+LoRaSetOpMode                0x1063   0x56  Code  Gb  LoRa.o [1]
+LoRabegin                     0xa09  0x17e  Code  Gb  LoRa.o [1]
+LoRabeginPacket               0xb87   0x3a  Code  Gb  LoRa.o [1]
+LoRaendPacket                 0xbc1   0x30  Code  Gb  LoRa.o [1]
+LoRaexplicitHeaderMode        0xf91   0x1a  Code  Gb  LoRa.o [1]
+LoRagetSignalBandwidth        0xdd3   0x60  Code  Gb  LoRa.o [1]
+LoRagetSpreadingFactor        0xd69   0x10  Code  Gb  LoRa.o [1]
+LoRaidle                      0xc85   0x12  Code  Gb  LoRa.o [1]
+LoRaimplicitHeaderMode        0xfab   0x1c  Code  Gb  LoRa.o [1]
+LoRaisTransmitting            0xbf1   0x2a  Code  Gb  LoRa.o [1]
+LoRareadRegister             0x1019   0x24  Code  Gb  LoRa.o [1]
+LoRasetCodingRate4            0xf07   0x32  Code  Gb  LoRa.o [1]
+LoRasetFrequency              0xd1b   0x48  Code  Gb  LoRa.o [1]
+LoRasetLdoFlag                0xeb9   0x4e  Code  Gb  LoRa.o [1]
+LoRasetOCP                    0xf4b   0x46  Code  Gb  LoRa.o [1]
+LoRasetSignalBandwidth        0xe35   0x7e  Code  Gb  LoRa.o [1]
+LoRasetSpreadingFactor        0xd79   0x5a  Code  Gb  LoRa.o [1]
+LoRasetSyncWord               0xf39   0x12  Code  Gb  LoRa.o [1]
+LoRasetTxPower                0xca9   0x72  Code  Gb  LoRa.o [1]
+LoRasleep                     0xc97   0x12  Code  Gb  LoRa.o [1]
+LoRawrite                     0xc35   0x3e  Code  Gb  LoRa.o [1]
+LoRawriteRegister            0x103d   0x26  Code  Gb  LoRa.o [1]
+Log2                          0x8b5   0x1c  Code  Gb  ddl.o [1]
+Region$$Table$$Base          0x25ac          --   Gb  - Linker created -
+Region$$Table$$Limit         0x25bc          --   Gb  - Linker created -
+RxFlg                   0x2000'0070    0x1  Data  Gb  main.o [1]
+RxIntCallback                0x2373   0x50  Code  Gb  main.o [1]
+Serial_begin                 0x2179  0x182  Code  Gb  main.o [1]
+Spi_GetStatus                0x1433   0x5e  Code  Gb  spi.o [1]
+Spi_IRQHandler               0x1429    0xa  Code  Gb  spi.o [1]
+Spi_Init                     0x1491   0x92  Code  Gb  spi.o [1]
+Spi_ReceiveData              0x155d   0x2c  Code  Gb  spi.o [1]
+Spi_SendData                 0x152d   0x30  Code  Gb  spi.o [1]
+Spi_SetCS                    0x1523    0xa  Code  Gb  spi.o [1]
+SystemCoreClock         0x2000'0000    0x4  Data  Gb  system_hc32l110.o [1]
+SystemCoreClockUpdate         0x86d    0xc  Code  Gb  system_hc32l110.o [1]
+SystemInit                    0x87b   0x32  Code  Gb  system_hc32l110.o [1]
+Tim_IRQHandler               0x1dbf   0x2e  Code  Gb  bt.o [1]
+UartDeInitNvic               0x1c4f   0x24  Code  Lc  uart.o [1]
+UartGetInternDataPtr         0x1921   0x3a  Code  Lc  uart.o [1]
+UartInitNvic                 0x1c2b   0x24  Code  Lc  uart.o [1]
+Uart_ClrStatus               0x1b37   0x5c  Code  Gb  uart.o [1]
+Uart_DisableIrq              0x19c1   0x4c  Code  Gb  uart.o [1]
+Uart_EnableFunc              0x1b01   0x36  Code  Gb  uart.o [1]
+Uart_EnableIrq               0x1975   0x4c  Code  Gb  uart.o [1]
+Uart_IRQHandler              0x1bb3   0x78  Code  Gb  uart.o [1]
+Uart_Init                    0x1c73   0x82  Code  Gb  uart.o [1]
+Uart_ReceiveData             0x1b93   0x20  Code  Gb  uart.o [1]
+Uart_SetBaudRate             0x1a8d   0x6c  Code  Gb  uart.o [1]
+Uart_SetMode                 0x1a0d   0x36  Code  Gb  uart.o [1]
+Uart_SetMultiMode            0x1a43   0x4a  Code  Gb  uart.o [1]
+Wdt_Feed                     0x2123    0xc  Code  Gb  wdt.o [1]
+Wdt_IRQHandler               0x212f   0x22  Code  Gb  wdt.o [1]
+Wdt_Init                     0x20cf   0x42  Code  Gb  wdt.o [1]
+Wdt_Start                    0x2111   0x12  Code  Gb  wdt.o [1]
+Wdt_WriteWdtLoad             0x20b9   0x16  Code  Gb  wdt.o [1]
+_HidePinInit                  0x879    0x2  Code  Lc  system_hc32l110.o [1]
+__NVIC_ClearPendingIRQ       0x1645   0x18  Code  Lc  interrupts_hc32l110.o [1]
+__NVIC_ClearPendingIRQ       0x187d   0x18  Code  Lc  uart.o [1]
+__NVIC_DisableIRQ            0x1625   0x20  Code  Lc  interrupts_hc32l110.o [1]
+__NVIC_DisableIRQ            0x185d   0x20  Code  Lc  uart.o [1]
+__NVIC_EnableIRQ             0x160d   0x18  Code  Lc  interrupts_hc32l110.o [1]
+__NVIC_EnableIRQ             0x1845   0x18  Code  Lc  uart.o [1]
+__NVIC_SetPriority             0xc1   0x8c  Code  Lc  clk.o [1]
+__NVIC_SetPriority           0x165d   0x8c  Code  Lc  interrupts_hc32l110.o [1]
+__NVIC_SetPriority           0x1895   0x8c  Code  Lc  uart.o [1]
+__aeabi_idiv                  0x951         Code  Gb  I32DivModFast.o [4]
+__aeabi_idiv0                 0xa05         Code  Gb  IntDivZer.o [4]
+__aeabi_idivmod               0x951         Code  Gb  I32DivModFast.o [4]
+__aeabi_ldiv0                0x1841         Code  Gb  I64DivZer.o [4]
+__aeabi_uidiv                 0x957         Code  Gb  I32DivModFast.o [4]
+__aeabi_uidivmod              0x957         Code  Gb  I32DivModFast.o [4]
+__aeabi_uldivmod             0x15a1         Code  Gb  I64DivMod.o [4]
+__cmain                      0x25bd         Code  Gb  cmain.o [4]
+__exit                       0x25f5   0x14  Code  Gb  exit.o [5]
+__iar_data_init3             0x2585   0x28  Code  Gb  data_init.o [4]
+__iar_packbits_init_single3
+                             0x2521   0x3c  Code  Gb  packbits_init_single.o [4]
+__iar_program_start          0x2609         Code  Gb  cstartup_M.o [4]
+__low_level_init             0x25db    0x4  Code  Gb  low_level_init.o [2]
+__vector_table                  0x0         Data  Gb  startup_hc32l110.o [1]
+_call_main                   0x25c9         Code  Gb  cmain.o [4]
+_exit                        0x25e9         Code  Gb  cexit.o [4]
+_frequency              0x2000'0038    0x4  Data  Gb  LoRa.o [1]
+_implicitHeaderMode     0x2000'003c    0x4  Data  Gb  LoRa.o [1]
+_main                        0x25d7         Code  Gb  cmain.o [4]
+ddl_memclr                    0x8d1   0x1a  Code  Gb  ddl.o [1]
+delay1ms                      0x8eb   0x30  Code  Gb  ddl.o [1]
+exit                         0x25df    0x8  Code  Gb  exit.o [2]
+ledState                0x2000'0044    0x4  Data  Gb  main.o [1]
+m_astcUartInstanceDataLut
+                        0x2000'0004   0x28  Data  Lc  uart.o [1]
+main                         0x23d1  0x124  Code  Gb  main.o [1]
+millis_t                0x2000'0040    0x4  Data  Gb  main.o [1]
+packet                  0x2000'0048   0x20  Data  Gb  main.o [1]
+pfnSpiCallback          0x2000'0068    0x4  Data  Lc  spi.o [1]
+pfnTim0Callback         0x2000'002c    0x4  Data  Lc  bt.o [1]
+pfnTim1Callback         0x2000'0030    0x4  Data  Lc  bt.o [1]
+pfnTim2Callback         0x2000'0034    0x4  Data  Lc  bt.o [1]
+pfnWdtCallback          0x2000'006c    0x4  Data  Lc  wdt.o [1]
+
+
+[1] = D:\Users\Pavel\Documents\IAR Embedded Workbench\HC32L110_LRS\Release\Obj
+[2] = dl6M_tlf.a
+[3] = m6M_tl.a
+[4] = rt6M_tl.a
+[5] = shb_l.a
+
+  9 742 bytes of readonly  code memory
+     48 bytes of readonly  data memory
+    370 bytes of readwrite data memory
+
+Errors: none
+Warnings: none
