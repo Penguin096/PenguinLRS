@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SystemConfig>
+  <EnglishLanguage>true</EnglishLanguage>
+  <TargetMCU>
+    <Index>4</Index>
+  </TargetMCU>
+  <CrystalIndex>2</CrystalIndex>
+  <HexFile>D:\Users\Pavel\Documents\IAR Embedded Workbench\HC32L110_LRS__RX_Q\Release\Exe\HC32L110_LRS.hex</HexFile>
+  <Com>COM1</Com>
+  <AutoNumber>
+    <AutoNumberSelected>false</AutoNumberSelected>
+    <AotuNumberStartAddr></AotuNumberStartAddr>
+    <Length></Length>
+    <StartNum></StartNum>
+    <Interval></Interval>
+    <CurrentNum></CurrentNum>
+    <HistoryNum></HistoryNum>
+  </AutoNumber>
+  <ChipErase>true</ChipErase>
+  <FullDuplex>false</FullDuplex>
+  <Erase>true</Erase>
+  <BlankCheck>true</BlankCheck>
+  <Program>true</Program>
+  <Verify>true</Verify>
+  <Encrypt>false</Encrypt>
+  <Encrypt2>false</Encrypt2>
+  <Disorder>0000</Disorder>
+</SystemConfig>
