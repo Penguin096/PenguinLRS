@@ -7,6 +7,7 @@
 #include "bt.h"
 #include "Serial.h"
 #include "LoRa.h"
+#include "crc.h"
 
 #define TX_OUTPUT_POWER                             20        // dBm
 #define LORA_BANDWIDTH                              250E3     // [ 125 kHz,
@@ -18,8 +19,6 @@
                                                               //  6: 4/6,
                                                               //  7: 4/7,
                                                               //  8: 4/8]
-
-#define BufferSize                                  20
 
 //#######################################
 #define SBUS_MIN_VALUE 173   // 
@@ -33,7 +32,7 @@ int ledState = FALSE;
 //uint32_t previousMillis2 = 0;
 volatile boolean_t RxFlg;
 volatile uint8_t IDX;
-uint8_t Packet[BufferSize];
+uint8_t Packet[20];
 uint8_t RFch;
 
 void PreparePacket(boolean_t digitalCH1, boolean_t digitalCH2);
@@ -131,7 +130,7 @@ int32_t main(void)
   /* open peripheral clk */
   Clk_SetPeripheralGate(ClkPeripheralGpio, TRUE);
   Clk_SetPeripheralGate(ClkPeripheralBt, TRUE);
-  
+  Clk_SetPeripheralGate(ClkPeripheralCrc, TRUE);
   ////////////////////////TIM Init////////////////////////    
   BtTimer2Init();
   //////////////////////////////////////////////////////// 
@@ -175,7 +174,7 @@ int32_t main(void)
 //      previousMillis2 = millis(); 
       
       LoRabeginPacket(FALSE);
-      LoRawrite(Packet, 18);        
+      LoRawrite(Packet, 20);        
       LoRaendPacket(FALSE);
       LoRaidle();
       
@@ -194,7 +193,7 @@ int32_t main(void)
 }
 
 void PreparePacket(boolean_t digitalCH1, boolean_t digitalCH2) {
-  memset(Packet, 0x00, 18);  //Zero out packet data
+  memset(Packet, 0x00, 20);  //Zero out packet data
   
     for (uint8_t i = 0; i<11; i++) {
       Packet[i] = sbusPacket[i+1]; 
@@ -217,4 +216,9 @@ void PreparePacket(boolean_t digitalCH1, boolean_t digitalCH2) {
   for (uint8_t i = 0; i < 4; i++) {
     Packet[13+i] = SerialBuff [i];
   } 
+  
+  uint16_t Crc16 = 0;
+  Crc16 =  CRC16_Get8(Packet, 18);
+  Packet[18] = Crc16 >> 8;
+  Packet[19] = Crc16;
 }

@@ -7,6 +7,7 @@
 #include "bt.h"
 #include "Serial.h"
 #include "LoRa.h"
+#include "crc.h"
 
 #define TX_OUTPUT_POWER                             20        // dBm
 #define LORA_BANDWIDTH                              250E3     // [ 125 kHz,
@@ -19,8 +20,6 @@
                                                               //  7: 4/7,
                                                               //  8: 4/8]
 
-#define BufferSize                                  18
-
 //############################################
 #define Red_LED_ON Gpio_SetIO(0, 3, TRUE)
 #define Red_LED_OFF Gpio_SetIO(0, 3, FALSE)
@@ -31,9 +30,6 @@
 //#######################################
 
 #define FAILSAFE
-//////////////////////CONFIGURATION///////////////////////////////
-#define chanel_number 6  //set the number of chanels
-//////////////////////////////////////////////////////////////////
 
 static uint16_t failsafeCnt = 0;
 static uint16_t rssi;
@@ -45,11 +41,10 @@ boolean_t isFailsafe;
 
 uint8_t RFch;
 
-uint8_t packet[BufferSize];
+uint8_t packet[20];
 
 boolean_t Read_Packet(void);
 void sbusPreparePacket(boolean_t isSignalLoss, boolean_t isFailsafe);
-
 
 long map(long x, long in_min, long in_max, long out_min, long out_max)
 {
@@ -127,7 +122,7 @@ int32_t main(void)
   Clk_SetPeripheralGate(ClkPeripheralWdt,TRUE);//
   Wdt_Init(&stcWdt_Config);
   
-  Wdt_Start();
+//  Wdt_Start();
   //////////////////////////////////////////////////////// 
   
   stc_clk_config_t stcClkCfg;
@@ -145,18 +140,19 @@ int32_t main(void)
   Clk_SetPeripheralGate(ClkPeripheralGpio, TRUE);
   Clk_SetPeripheralGate(ClkPeripheralBt, TRUE);
   Clk_SetPeripheralGate(ClkPeripheralWdt,TRUE);
-  
+  Clk_SetPeripheralGate(ClkPeripheralCrc, TRUE);
   ////////////////////////TIM Init////////////////////////    
   BtTimer2Init();
   //////////////////////////////////////////////////////// 
-  
-  Serial_begin(UARTCH0, 100000); 
-  
+   
   ////////////////////////////////////////////////////////
-  Gpio_InitIOExt(0, 3, GpioDirOut, TRUE, FALSE, FALSE, FALSE); //AUX  
-  Gpio_InitIO(3, 5, GpioDirIn); //M0
+  Gpio_InitIOExt(0, 3, GpioDirOut, FALSE, FALSE, FALSE, FALSE); //AUX  
+  Gpio_InitIOExt(3, 5, GpioDirIn, TRUE, FALSE, FALSE, FALSE); //M0
   Gpio_InitIO(3, 6, GpioDirIn); //M1
   ////////////////////////////////////////////////////////
+    
+  Serial_begin(UARTCH0, 100000); 
+  Wdt_Start();
   
   if (!LoRabegin(868E6)) {
 #ifdef __DEBUG
@@ -248,9 +244,16 @@ boolean_t Read_Packet(void) {
   while (LoRaavailable()) {
     packet[i] = LoRaread();  
     i++;
-    if(i == 18) {
+    if(i == 20) {
       rssi = map(LoRapacketRssi()+157, 0, 157, SBUS_MIN_VALUE, SBUS_MAX_VALUE);
-      return 1;
+      uint16_t Crc16 = 0;
+      Crc16 = packet[18]<<8;
+      Crc16 |= packet[19];
+      if (CRC16_Get8(packet, 18) == Crc16) {
+        return 1;
+      } else {
+        return 0;
+      }
     }
   }
   return 0;

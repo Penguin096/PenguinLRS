@@ -7,6 +7,7 @@
 #include "bt.h"
 #include "Serial.h"
 #include "LoRa.h"
+#include "crc.h"
 
 #define TX_OUTPUT_POWER                             20        // dBm
 #define LORA_BANDWIDTH                              250E3     // [ 125 kHz,
@@ -19,8 +20,6 @@
                                                               //  7: 4/7,
                                                               //  8: 4/8]
 
-#define BufferSize                                  32
-
 //#######################################
 #define RC_CHANNEL_MIN 1155   // Servo rx minimum position 
 #define RC_CHANNEL_MAX 1929  // Servo rx maximum position 
@@ -32,16 +31,13 @@
 #define chanel_number 8  //set the number of chanels
 //////////////////////////////////////////////////////////////////
 
-static uint8_t Packet[18];
-
-//char u8TxData [] = "HUADA MCU!";
+uint8_t packet[18];
 uint8_t SerialBuff[4] = "HELO";
 int ledState = FALSE;
-uint32_t previousMillis = 0;
-uint32_t previousMillis2 = 0;
+//uint32_t previousMillis2 = 0;
 volatile boolean_t RxFlg;
-volatile unsigned char IDX;
-uint8_t packet[BufferSize];
+uint8_t Packet[20];
+volatile uint8_t IDX;
 
 void PreparePacket(boolean_t digitalCH1, boolean_t digitalCH2, boolean_t isSignalLoss, boolean_t isFailsafe);
 
@@ -138,7 +134,7 @@ int32_t main(void)
   /* open peripheral clk */
   Clk_SetPeripheralGate(ClkPeripheralGpio, TRUE);
   Clk_SetPeripheralGate(ClkPeripheralBt, TRUE);
-  
+  Clk_SetPeripheralGate(ClkPeripheralCrc, TRUE);
   ////////////////////////TIM Init////////////////////////    
   BtTimer2Init();
   //////////////////////////////////////////////////////// 
@@ -193,7 +189,7 @@ int32_t main(void)
 //      previousMillis2 = millis(); 
       
       LoRabeginPacket(FALSE);
-      LoRawrite(Packet, 18);      
+      LoRawrite(Packet, 20);      
       
       RxFlg = FALSE;
            
@@ -215,7 +211,7 @@ int32_t main(void)
 }
 
 void PreparePacket(boolean_t digitalCH1, boolean_t digitalCH2, boolean_t isSignalLoss, boolean_t isFailsafe) {
-  memset(Packet, 0x00, 18);  //Zero out packet data
+  memset(Packet, 0x00, 20);  //Zero out packet data
 
   uint8_t Current_Packet_Bit = 0;
   uint8_t Packet_Position = 0;
@@ -269,4 +265,9 @@ void PreparePacket(boolean_t digitalCH1, boolean_t digitalCH2, boolean_t isSigna
   for (uint8_t i = 0; i < 4; i++) {
     Packet[13+i] = SerialBuff [i];
   } 
+  
+  uint16_t Crc16 = 0;
+  Crc16 =  CRC16_Get8(Packet, 18);
+  Packet[18] = Crc16 >> 8;
+  Packet[19] = Crc16;
 }
