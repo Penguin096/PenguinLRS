@@ -32,12 +32,20 @@ void Serial_begin(uint8_t UARTCH, uint32_t baud)
     DDL_ZERO_STRUCT(stcBaud);
     DDL_ZERO_STRUCT(stcBtConfig);
     
-    Gpio_InitIOExt(0,2,GpioDirOut,TRUE,FALSE,FALSE,FALSE); //  UART_TX
-    Gpio_InitIOExt(0,1,GpioDirOut,TRUE,FALSE,FALSE,FALSE); //  UART_RX 
-     
-    Gpio_SetFunc_UART0_TXD_P02();
-    Gpio_SetFunc_UART0_RXD_P01();
-       
+    if(UARTCH == UARTCH1) {
+      Gpio_InitIOExt(3,5,GpioDirOut,TRUE,FALSE,FALSE,FALSE); //  UART_TX
+      Gpio_InitIOExt(3,6,GpioDirOut,TRUE,FALSE,FALSE,FALSE); //  UART_RX 
+      
+      Gpio_SetFunc_UART1TX_P35();
+      Gpio_SetFunc_UART1RX_P36();
+    } else {
+      Gpio_InitIOExt(0,2,GpioDirOut,TRUE,FALSE,FALSE,FALSE); //  UART_TX
+      Gpio_InitIOExt(0,1,GpioDirOut,TRUE,FALSE,FALSE,FALSE); //  UART_RX 
+      
+      Gpio_SetFunc_UART0_TXD_P02();
+      Gpio_SetFunc_UART0_RXD_P01();
+    }
+    
     if(UARTCH == UARTCH0)
     {
       Clk_SetPeripheralGate(ClkPeripheralUart0,TRUE);
